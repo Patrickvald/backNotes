@@ -18,7 +18,6 @@ let notes = [
       important: true
     }
   ]
-app.use(express.static(path.join(__dirname,'dist')))
 
 const requestLogger = (request, response, next) => {
     console.log('Method:', request.method)
