@@ -30,6 +30,7 @@ const requestLogger = (request, response, next) => {
 
 app.use(express.json())
 app.use(cors())
+app.use(express.static('dist'))
 app.use(requestLogger)
 
 const unknownEndpoint = (request, response) => {
