@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')
+const path = require('path')
 const app = express()
 
 let notes = [
@@ -27,7 +28,7 @@ const requestLogger = (request, response, next) => {
     console.log('---')
     next()
   }
-app.use(express.static('dist'))
+app.use(express.static(path.join(__dirname,'dist')))
 app.use(express.json())
 app.use(cors())
 app.use(requestLogger)
@@ -36,9 +37,12 @@ const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
-app.get('/',(req,res)=>{
+/* app.get('/',(req,res)=>{
     res.send('<h1>Hello World¡</h1>')
-})
+}) */
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, './dist/index.html'));
+});
 
 app.get('/api/notes',(req,res)=>{
     res.json(notes)
