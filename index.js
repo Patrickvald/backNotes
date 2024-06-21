@@ -1,5 +1,7 @@
 const express = require('express')
+const path = require('path');
 const app = express()
+const PORT = process.env.PORT || 3001
 
 let notes = [
     {
@@ -32,13 +34,19 @@ app.use(cors())
 app.use(express.json())
 app.use(requestLogger)
 
+app.use(express.static(path.join(__dirname, 'dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
-app.get('/',(req,res)=>{
+/* app.get('/',(req,res)=>{
     res.send('<h1>Hello World¡</h1>')
-}) 
+})  */
 /* app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, './dist/index.html'));
 }); */
@@ -92,7 +100,7 @@ app.post('/api/notes',(req,res) =>{
 
 app.use(unknownEndpoint)
 
-const PORT = process.env.PORT || 3001
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
