@@ -90,9 +90,9 @@ app.post('/api/notes',(req,res) =>{
     return res.status(404).json({error:'content missing'})
   }
   const note = {
+    id: generateId(),
     content: body.content,
-    important: Boolean(body.important)||false,
-    id: generateId()
+    important: Boolean(body.important)||false
   }
 
   notes = notes.concat(note)
