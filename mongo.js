@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
-
+const dotenv = require('dotenv')
+dotenv.config()
 if(process.argv.length<3){
     console.log('give password as argumen');
     process.exit(1)
@@ -7,7 +8,7 @@ if(process.argv.length<3){
 
 const password = process.argv[2]
 
-const url = `mongodb+srv://patrickvValdivia:BPOFBhg8rllrtZiD@clusterpat.suoywpo.mongodb.net/noteApp?retryWrites=true&w=majority&appName=ClusterPat`
+const url = MONGO_URI
 
 mongoose.set('strictQuery',false)
 
