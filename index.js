@@ -48,12 +48,12 @@ const url = process.env.MONGO_URI
 
 mongoose.set('strictQuery',false)
 mongoose.connect(url)
-const contactSchema = new mongoose.Schema({
-  name: String,
-  phone: String
+const noteSchema = new mongoose.Schema({
+  content: String,
+  important: Boolean
 })
 
-const Contact = mongoose.model('Contact', contactSchema)
+const Note = mongoose.model('Note', noteSchema)
 
 app.get('/',(req,res)=>{
   res.send('<h1>Hello World¡</h1>')
