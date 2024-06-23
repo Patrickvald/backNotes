@@ -1,9 +1,8 @@
 const express = require('express')
-const mongoose = require('mongoose')
-const dotenv = require('dotenv')
-dotenv.config()
+const dotenv = require('dotenv').config()
 const app = express()
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || process.env.LOCALPORT
+const Note = require('./models/note')
 
 let notes = [
     {
@@ -42,18 +41,7 @@ const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
-//Mongo
-const password = process.argv[2]
-const url = process.env.MONGO_URI
 
-mongoose.set('strictQuery',false)
-mongoose.connect(url)
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean
-})
-
-const Note = mongoose.model('Note', noteSchema)
 
 app.get('/',(req,res)=>{
   res.send('<h1>Hello World¡</h1>')
@@ -66,18 +54,9 @@ app.get('/api/notes',(req,res)=>{
 })
 
 app.get('/api/notes/:id',(req,res)=>{
-  const id = Number(req.params.id)
-  const note = notes.find(note => {
-    console.log(note.id, typeof note.id, typeof id, note.id === id)
-    return note.id === id
-  })
-  if(note){
+  Note.findById(req.params.id).then(note =>{
     res.json(note)
-  }else{
-
-      res.statusMessage ='Page was not found'
-      res.status(404).send('Page was not found').end()   
-  }
+  })
 })
 
 app.delete('/api/notes/:id',(req,res) =>{
@@ -87,25 +66,20 @@ app.delete('/api/notes/:id',(req,res) =>{
   res.status(204).end()
 })
 
-const generateId = ()=>{
-    const maxId = notes.length > 0 ? Math.max(...notes.map(n=> n.id)):0
-    return maxId +1
-    //notes.map(n => n.id) crea un nuevo array que contiene todos los ids de las notas. Math.max devuelve el valor máximo de los números que se le pasan. Sin embargo, notes.map(n => n.id) es un array, por lo que no se puede asignar directamente como parámetro a Math.max. El array se puede transformar en números individuales mediante el uso de la sintaxis de spread (tres puntos) ....
-}
 app.post('/api/notes',(req,res) =>{
 
   const body = req.body
-  if(!body.content){
+  if(body.content === undefined){
     return res.status(404).json({error:'content missing'})
   }
-  const note = {
-    id: generateId(),
+  const note = new Note ({
     content: body.content,
-    important: Boolean(body.important)||false
-  }
+    important: body.important||false
+  })
 
-  notes = notes.concat(note)
-  res.json(notes)
+  note.save().then(savedNote =>{
+    res.json(savedNote)
+  })
 })
 
 app.use(unknownEndpoint)
