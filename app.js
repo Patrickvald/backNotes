@@ -9,7 +9,7 @@ const mongoose = require('mongoose')
 
 mongoose.set('strictQuery',false)
 
-logger.info('Connectin to: ', config.MONGO_URI);
+logger.info('Connectin to: Pat Database');
 
 mongoose.connect(config.MONGO_URI)
     .then( () =>{
